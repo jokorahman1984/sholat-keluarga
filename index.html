@@ -10,17 +10,16 @@
       border-radius: 8px; border: 1px solid #ccc;
     }
     button { background: green; color: white; }
+    label { font-weight: bold; }
   </style>
 </head>
 <body>
 
 <h2>Catatan Sholat</h2>
-  
+
 <select id="nama">
   <option>JOKO RAHMAN</option>
   <option>OMAS APRIANI</option>
-  <option>WAFA MAZIKO</option>
-  <option>ORVALYN AMBERLEE MAZIKO</option>
 </select>
 
 <label>Subuh</label>
@@ -41,42 +40,44 @@
 <button onclick="kirim()">Simpan</button>
 
 <script>
-const URL = "https://script.google.com/macros/s/AKfycbxD4G_B10UNL3ZmJoalIT-YteC6Tn0KD_wU-1Y0Ohmow_E2wbVhvGXp4ync7fVr7BluZQ/exec";
+const URL = "PASTE_URL_APPS_SCRIPT_DISINI";
 
 function status(waktu){
   return waktu ? "Sholat" : "Tidak Sholat";
 }
 
 function kirim(){
+
+  const subuh = document.getElementById("subuh").value;
+  const dzuhur = document.getElementById("dzuhur").value;
+  const ashar = document.getElementById("ashar").value;
+  const maghrib = document.getElementById("maghrib").value;
+  const isya = document.getElementById("isya").value;
+
+  if(!subuh && !dzuhur && !ashar && !maghrib && !isya){
+    alert("Isi minimal 1 waktu sholat");
+    return;
+  }
+
   const data = {
     nama: document.getElementById("nama").value,
-    subuh: document.getElementById("subuh").value,
-    dzuhur: document.getElementById("dzuhur").value,
-    ashar: document.getElementById("ashar").value,
-    maghrib: document.getElementById("maghrib").value,
-    isya: document.getElementById("isya").value,
+    subuh, dzuhur, ashar, maghrib, isya
   };
 
-  data.status_subuh = status(data.subuh);
-  data.status_dzuhur = status(data.dzuhur);
-  data.status_ashar = status(data.ashar);
-  data.status_maghrib = status(data.maghrib);
-  data.status_isya = status(data.isya);
+  data.status_subuh = status(subuh);
+  data.status_dzuhur = status(dzuhur);
+  data.status_ashar = status(ashar);
+  data.status_maghrib = status(maghrib);
+  data.status_isya = status(isya);
 
   fetch(URL, {
     method: "POST",
     body: JSON.stringify(data)
+  }).then(() => {
+    alert("Tersimpan");
+    loadData();
   });
-
-  alert("Data tersimpan");
 }
-</script>
-
-</body>
-</html>
-
-<script>
-const URL = "URL_APPS_SCRIPT_ANDA";
 
 function loadData() {
   const nama = document.getElementById("nama").value;
@@ -84,11 +85,12 @@ function loadData() {
   fetch(URL + "?nama=" + nama)
     .then(res => res.json())
     .then(data => {
-      if(data.subuh) document.getElementById("subuh").value = data.subuh;
-      if(data.dzuhur) document.getElementById("dzuhur").value = data.dzuhur;
-      if(data.ashar) document.getElementById("ashar").value = data.ashar;
-      if(data.maghrib) document.getElementById("maghrib").value = data.maghrib;
-      if(data.isya) document.getElementById("isya").value = data.isya;
+
+      document.getElementById("subuh").value = data.subuh || "";
+      document.getElementById("dzuhur").value = data.dzuhur || "";
+      document.getElementById("ashar").value = data.ashar || "";
+      document.getElementById("maghrib").value = data.maghrib || "";
+      document.getElementById("isya").value = data.isya || "";
 
       warnai();
     });
@@ -106,3 +108,6 @@ function warnai() {
 document.getElementById("nama").addEventListener("change", loadData);
 window.onload = loadData;
 </script>
+
+</body>
+</html>
