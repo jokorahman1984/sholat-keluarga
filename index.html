@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Catatan Sholat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: Arial; padding: 15px; }
+    input, select, button {
+      width: 100%; margin: 6px 0; padding: 12px;
+      border-radius: 8px; border: 1px solid #ccc;
+    }
+    button { background: green; color: white; }
+  </style>
+</head>
+<body>
+
+<h2>Catatan Sholat</h2>
+
+<select id="nama">
+  <option>Ayah</option>
+  <option>Ibu</option>
+  <option>Anak 1</option>
+  <option>Anak 2</option>
+</select>
+
+<input type="time" id="subuh">
+<input type="time" id="dzuhur">
+<input type="time" id="ashar">
+<input type="time" id="maghrib">
+<input type="time" id="isya">
+
+<button onclick="kirim()">Simpan</button>
+
+<script>
+const URL = "https://script.google.com/macros/s/AKfycbxD4G_B10UNL3ZmJoalIT-YteC6Tn0KD_wU-1Y0Ohmow_E2wbVhvGXp4ync7fVr7BluZQ/exec";
+
+function status(waktu){
+  return waktu ? "Sholat" : "Tidak Sholat";
+}
+
+function kirim(){
+  const data = {
+    nama: document.getElementById("nama").value,
+    subuh: document.getElementById("subuh").value,
+    dzuhur: document.getElementById("dzuhur").value,
+    ashar: document.getElementById("ashar").value,
+    maghrib: document.getElementById("maghrib").value,
+    isya: document.getElementById("isya").value,
+  };
+
+  data.status_subuh = status(data.subuh);
+  data.status_dzuhur = status(data.dzuhur);
+  data.status_ashar = status(data.ashar);
+  data.status_maghrib = status(data.maghrib);
+  data.status_isya = status(data.isya);
+
+  fetch(URL, {
+    method: "POST",
+    body: JSON.stringify(data)
+  });
+
+  alert("Data tersimpan");
+}
+</script>
+
+</body>
+</html>
