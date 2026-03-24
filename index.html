@@ -1,104 +1,55 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Catatan Sholat</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body { font-family: Arial; padding: 15px; }
-    input, select, button {
-      width: 100%; margin: 6px 0; padding: 12px;
-      border-radius: 8px; border: 1px solid #ccc;
-    }
-    button { background: green; color: white; }
-    label { font-weight: bold; }
-  </style>
-</head>
-<body>
-
-<h2>Catatan Sholat</h2>
-
-<select id="nama">
-  <option>JOKO RAHMAN</option>
-  <option>OMAS APRIANI</option>
-</select>
-
-<label>Subuh</label>
-<input type="time" id="subuh">
-
-<label>Dzuhur</label>
-<input type="time" id="dzuhur">
-
-<label>Ashar</label>
-<input type="time" id="ashar">
-
-<label>Maghrib</label>
-<input type="time" id="maghrib">
-
-<label>Isya</label>
-<input type="time" id="isya">
-
-<button onclick="kirim()">Simpan</button>
-
 <script>
-const URL = "https://script.google.com/macros/s/AKfycbxD4G_B10UNL3ZmJoalIT-YteC6Tn0KD_wU-1Y0Ohmow_E2wbVhvGXp4ync7fVr7BluZQ/exec";
+const URL = "URL_APPS_SCRIPT_ANDA";
 
-function status(waktu){
-  return waktu ? "Sholat" : "Tidak Sholat";
+function status(w){
+  return w ? "Sholat" : "Tidak Sholat";
 }
 
 function kirim(){
-
-  const subuh = document.getElementById("subuh").value;
-  const dzuhur = document.getElementById("dzuhur").value;
-  const ashar = document.getElementById("ashar").value;
-  const maghrib = document.getElementById("maghrib").value;
-  const isya = document.getElementById("isya").value;
-
-  if(!subuh && !dzuhur && !ashar && !maghrib && !isya){
-    alert("Isi minimal 1 waktu sholat");
-    return;
-  }
-
   const data = {
     nama: document.getElementById("nama").value,
-    subuh, dzuhur, ashar, maghrib, isya
+    subuh: document.getElementById("subuh").value,
+    dzuhur: document.getElementById("dzuhur").value,
+    ashar: document.getElementById("ashar").value,
+    maghrib: document.getElementById("maghrib").value,
+    isya: document.getElementById("isya").value,
   };
 
-  data.status_subuh = status(subuh);
-  data.status_dzuhur = status(dzuhur);
-  data.status_ashar = status(ashar);
-  data.status_maghrib = status(maghrib);
-  data.status_isya = status(isya);
+  data.status_subuh = status(data.subuh);
+  data.status_dzuhur = status(data.dzuhur);
+  data.status_ashar = status(data.ashar);
+  data.status_maghrib = status(data.maghrib);
+  data.status_isya = status(data.isya);
 
   fetch(URL, {
     method: "POST",
     body: JSON.stringify(data)
-  }).then(() => {
+  })
+  .then(res => res.text())
+  .then(res => {
     alert("Tersimpan");
     loadData();
   });
 }
 
-function loadData() {
+function loadData(){
   const nama = document.getElementById("nama").value;
 
   fetch(URL + "?nama=" + nama)
-    .then(res => res.json())
-    .then(data => {
-
-      document.getElementById("subuh").value = data.subuh || "";
-      document.getElementById("dzuhur").value = data.dzuhur || "";
-      document.getElementById("ashar").value = data.ashar || "";
-      document.getElementById("maghrib").value = data.maghrib || "";
-      document.getElementById("isya").value = data.isya || "";
-
-      warnai();
+  .then(res => res.json())
+  .then(data => {
+    ["subuh","dzuhur","ashar","maghrib","isya"].forEach(id => {
+      if(data[id]){
+        document.getElementById(id).value = data[id];
+      }
     });
+    warnai();
+  });
 }
 
-function warnai() {
+function warnai(){
   ["subuh","dzuhur","ashar","maghrib","isya"].forEach(id => {
-    const el = document.getElementById(id);
+    let el = document.getElementById(id);
     if(el.value){
       el.style.background = "#b6fcb6";
     }
@@ -108,6 +59,3 @@ function warnai() {
 document.getElementById("nama").addEventListener("change", loadData);
 window.onload = loadData;
 </script>
-
-</body>
-</html>
