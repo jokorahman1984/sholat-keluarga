@@ -1,10 +1,81 @@
-<script>
-const URL = "URL_APPS_SCRIPT_ANDA";
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Catatan Sholat Keluarga</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <style>
+    body {
+      font-family: Arial;
+      padding: 15px;
+      background: #f5f5f5;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    label {
+      font-weight: bold;
+      margin-top: 10px;
+      display: block;
+    }
+
+    input, select, button {
+      width: 100%;
+      margin: 6px 0;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    button {
+      background: green;
+      color: white;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>Catatan Sholat</h2>
+
+<label>Nama</label>
+<select id="nama">
+  <option>JOKO</option>
+  <option>OMAS</option>
+  <option>WAFA</option>
+  <option>ALYN</option>
+</select>
+
+<label>Subuh</label>
+<input type="time" id="subuh">
+
+<label>Dzuhur</label>
+<input type="time" id="dzuhur">
+
+<label>Ashar</label>
+<input type="time" id="ashar">
+
+<label>Maghrib</label>
+<input type="time" id="maghrib">
+
+<label>Isya</label>
+<input type="time" id="isya">
+
+<button onclick="kirim()">Simpan</button>
+
+<script>
+const URL = "https://script.google.com/macros/s/AKfycbxD4G_B10UNL3ZmJoalIT-YteC6Tn0KD_wU-1Y0Ohmow_E2wbVhvGXp4ync7fVr7BluZQ/exec";
+
+// fungsi status
 function status(w){
   return w ? "Sholat" : "Tidak Sholat";
 }
 
+// kirim data
 function kirim(){
   const data = {
     nama: document.getElementById("nama").value,
@@ -27,35 +98,47 @@ function kirim(){
   })
   .then(res => res.text())
   .then(res => {
-    alert("Tersimpan");
+    alert("Data tersimpan");
     loadData();
-  });
+  })
+  .catch(err => alert("Error: " + err));
 }
 
+// ambil data hari ini
 function loadData(){
   const nama = document.getElementById("nama").value;
 
   fetch(URL + "?nama=" + nama)
   .then(res => res.json())
   .then(data => {
-    ["subuh","dzuhur","ashar","maghrib","isya"].forEach(id => {
-      if(data[id]){
-        document.getElementById(id).value = data[id];
-      }
-    });
+
+    document.getElementById("subuh").value = data.subuh || "";
+    document.getElementById("dzuhur").value = data.dzuhur || "";
+    document.getElementById("ashar").value = data.ashar || "";
+    document.getElementById("maghrib").value = data.maghrib || "";
+    document.getElementById("isya").value = data.isya || "";
+
     warnai();
   });
 }
 
+// warna hijau jika sudah diisi
 function warnai(){
   ["subuh","dzuhur","ashar","maghrib","isya"].forEach(id => {
     let el = document.getElementById(id);
     if(el.value){
       el.style.background = "#b6fcb6";
+    } else {
+      el.style.background = "";
     }
   });
 }
 
+// event
 document.getElementById("nama").addEventListener("change", loadData);
 window.onload = loadData;
+
 </script>
+
+</body>
+</html>
