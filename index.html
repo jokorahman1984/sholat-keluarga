@@ -111,3 +111,14 @@ window.onload = loadData;
 
 </body>
 </html>
+fetch(URL, {
+  method: "POST",
+  body: JSON.stringify(data)
+})
+.then(res => res.text())
+.then(res => {
+  alert("Response: " + res);
+})
+.catch(err => {
+  alert("Error: " + err);
+});
