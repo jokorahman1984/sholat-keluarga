@@ -74,3 +74,35 @@ function kirim(){
 
 </body>
 </html>
+
+<script>
+const URL = "URL_APPS_SCRIPT_ANDA";
+
+function loadData() {
+  const nama = document.getElementById("nama").value;
+
+  fetch(URL + "?nama=" + nama)
+    .then(res => res.json())
+    .then(data => {
+      if(data.subuh) document.getElementById("subuh").value = data.subuh;
+      if(data.dzuhur) document.getElementById("dzuhur").value = data.dzuhur;
+      if(data.ashar) document.getElementById("ashar").value = data.ashar;
+      if(data.maghrib) document.getElementById("maghrib").value = data.maghrib;
+      if(data.isya) document.getElementById("isya").value = data.isya;
+
+      warnai();
+    });
+}
+
+function warnai() {
+  ["subuh","dzuhur","ashar","maghrib","isya"].forEach(id => {
+    const el = document.getElementById(id);
+    if(el.value){
+      el.style.background = "#b6fcb6";
+    }
+  });
+}
+
+document.getElementById("nama").addEventListener("change", loadData);
+window.onload = loadData;
+</script>
