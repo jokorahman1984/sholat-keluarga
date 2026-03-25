@@ -1,143 +1,119 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
+  <meta charset="UTF-8">
   <title>Catatan Sholat Keluarga</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
   <style>
-    body {
-      font-family: Arial;
-      padding: 15px;
-      background: #f5f5f5;
-    }
-
-    h2 {
-      text-align: center;
-    }
-
-    label {
-      font-weight: bold;
-      margin-top: 10px;
-      display: block;
-    }
-
-    input, select, button {
-      width: 100%;
-      margin: 6px 0;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-    }
-
-    button {
-      background: green;
-      color: white;
-      font-weight: bold;
-    }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; background: #eceff1; color: #333; }
+    .container { max-width: 400px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    h2 { text-align: center; color: #2e7d32; }
+    label { font-weight: bold; margin-top: 15px; display: block; font-size: 14px; }
+    input, select, button { width: 100%; margin: 8px 0; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px; box-sizing: border-box; }
+    button { background: #2e7d32; color: white; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 20px; }
+    button:hover { background: #1b5e20; }
+    button:disabled { background: #ccc; }
+    .loading { text-align: center; font-size: 12px; color: #666; display: none; }
   </style>
 </head>
-
 <body>
 
-<h2>Catatan Sholat Keluarga edit</h2>
+<div class="container">
+  <h2>Catatan Sholat</h2>
+  
+  <label>Anggota Keluarga</label>
+  <select id="nama">
+    <option value="JOKO">JOKO</option>
+    <option value="OMAS">OMAS</option>
+    <option value="WAFA">WAFA</option>
+    <option value="ALYN">ALYN</option>
+  </select>
 
-<label>Nama</label>
-<select id="nama">
-  <option>JOKO</option>
-  <option>OMAS</option>
-  <option>WAFA</option>
-  <option>ALYN</option>
-</select>
+  <hr>
 
-<label>Subuh</label>
-<input type="time" id="subuh">
+  <label>Subuh</label>
+  <input type="time" id="subuh">
 
-<label>Dzuhur</label>
-<input type="time" id="dzuhur">
+  <label>Dzuhur</label>
+  <input type="time" id="dzuhur">
 
-<label>Ashar</label>
-<input type="time" id="ashar">
+  <label>Ashar</label>
+  <input type="time" id="ashar">
 
-<label>Maghrib</label>
-<input type="time" id="maghrib">
+  <label>Maghrib</label>
+  <input type="time" id="maghrib">
 
-<label>Isya</label>
-<input type="time" id="isya">
+  <label>Isya</label>
+  <input type="time" id="isya">
 
-<button onclick="kirim()">Simpan</button>
+  <button id="btnSimpan" onclick="kirim()">Simpan Data</button>
+  <div id="loadingText" class="loading">Memproses data...</div>
+</div>
 
 <script>
-const URL = "https://script.google.com/macros/s/AKfycbx24tP8RD4vFxZY-nj2zWukRhUJskFxamGshPB0wIPqcclc-gdEhwqJHiZtaTBVU76TTQ/exec";
+  // GANTI DENGAN URL WEB APP ANDA
+  const URL = "https://script.google.com/macros/s/AKfycbxD4G_B10UNL3ZmJoalIT-YteC6Tn0KD_wU-1Y0Ohmow_E2wbVhvGXp4ync7fVr7BluZQ/exec";
 
-// fungsi status
-function status(w){
-  return w ? "Sholat" : "Tidak Sholat";
-}
+  function toggleLoading(show) {
+    document.getElementById("btnSimpan").disabled = show;
+    document.getElementById("loadingText").style.display = show ? "block" : "none";
+  }
 
-// kirim data
-function kirim(){
-  const data = {
-    nama: document.getElementById("nama").value,
-    subuh: document.getElementById("subuh").value,
-    dzuhur: document.getElementById("dzuhur").value,
-    ashar: document.getElementById("ashar").value,
-    maghrib: document.getElementById("maghrib").value,
-    isya: document.getElementById("isya").value,
-  };
+  function kirim() {
+    toggleLoading(true);
+    const data = {
+      nama: document.getElementById("nama").value,
+      subuh: document.getElementById("subuh").value,
+      dzuhur: document.getElementById("dzuhur").value,
+      ashar: document.getElementById("ashar").value,
+      maghrib: document.getElementById("maghrib").value,
+      isya: document.getElementById("isya").value,
+    };
 
-  data.status_subuh = status(data.subuh);
-  data.status_dzuhur = status(data.dzuhur);
-  data.status_ashar = status(data.ashar);
-  data.status_maghrib = status(data.maghrib);
-  data.status_isya = status(data.isya);
+    fetch(URL, {
+      method: "POST",
+      body: JSON.stringify(data)
+    })
+    .then(res => res.text())
+    .then(res => {
+      alert("Alhamdulillah, data " + res);
+      loadData();
+    })
+    .catch(err => alert("Error: " + err))
+    .finally(() => toggleLoading(false));
+  }
 
-  fetch(URL, {
-    method: "POST",
-    body: JSON.stringify(data)
-  })
-  .then(res => res.text())
-  .then(res => {
-    alert("Data tersimpan");
-    loadData();
-  })
-  .catch(err => alert("Error: " + err));
-}
+  function loadData() {
+    const nama = document.getElementById("nama").value;
+    // Reset form dulu
+    ["subuh","dzuhur","ashar","maghrib","isya"].forEach(id => {
+      document.getElementById(id).value = "";
+      document.getElementById(id).style.background = "";
+    });
 
-// ambil data hari ini
-function loadData(){
-  const nama = document.getElementById("nama").value;
+    fetch(URL + "?nama=" + nama)
+    .then(res => res.json())
+    .then(data => {
+      if (data.subuh) document.getElementById("subuh").value = data.subuh;
+      if (data.dzuhur) document.getElementById("dzuhur").value = data.dzuhur;
+      if (data.ashar) document.getElementById("ashar").value = data.ashar;
+      if (data.maghrib) document.getElementById("maghrib").value = data.maghrib;
+      if (data.isya) document.getElementById("isya").value = data.isya;
+      warnai();
+    });
+  }
 
-  fetch(URL + "?nama=" + nama)
-  .then(res => res.json())
-  .then(data => {
+  function warnai() {
+    ["subuh","dzuhur","ashar","maghrib","isya"].forEach(id => {
+      let el = document.getElementById(id);
+      if(el.value) {
+        el.style.background = "#c8e6c9"; // Hijau muda jika sudah isi
+      }
+    });
+  }
 
-    document.getElementById("subuh").value = data.subuh || "";
-    document.getElementById("dzuhur").value = data.dzuhur || "";
-    document.getElementById("ashar").value = data.ashar || "";
-    document.getElementById("maghrib").value = data.maghrib || "";
-    document.getElementById("isya").value = data.isya || "";
-
-    warnai();
-  });
-}
-
-// warna hijau jika sudah diisi
-function warnai(){
-  ["subuh","dzuhur","ashar","maghrib","isya"].forEach(id => {
-    let el = document.getElementById(id);
-    if(el.value){
-      el.style.background = "#b6fcb6";
-    } else {
-      el.style.background = "";
-    }
-  });
-}
-
-// event
-document.getElementById("nama").addEventListener("change", loadData);
-window.onload = loadData;
-
+  document.getElementById("nama").addEventListener("change", loadData);
+  window.onload = loadData;
 </script>
 
 </body>
